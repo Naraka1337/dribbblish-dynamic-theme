@@ -1051,7 +1051,7 @@ img.main-devicePicker-nowPlayingActiveIcon,
 
 /* Fix topbar left margin */
 .Root__globalNav {
-    grid-area: global-nav / main-view / global-nav / global-nav;
+    grid-area: global-nav / main-view / global-nav / global-nav !important;
     margin: 0px;
 }
 

@@ -38,22 +38,6 @@ curl -fsSL https://raw.githubusercontent.com/JulienMaille/dribbblish-dynamic-the
     spicetify apply
     ```
 
-## Follow system dark/light theme
-> [!IMPORTANT]
-> From Spotify v1.2.17, dark mode is forced. You will need to patch Spotify binary:
-
-#### Windows (PowerShell)
-
-```powershell
-Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/JulienMaille/dribbblish-dynamic-theme/master/patch-dark-mode.ps1" | Invoke-Expression
-```
-
-#### Linux/MacOS (Bash)
-
-```bash
-curl -fsSL "https://raw.githubusercontent.com/JulienMaille/dribbblish-dynamic-theme/master/patch-dark-mode.sh" | sh
-```
-
 ## Uninstall
 
 #### Windows (PowerShell)

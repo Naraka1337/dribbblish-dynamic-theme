@@ -441,8 +441,10 @@ async function songchange() {
         console.error(err);
     }
 
-    let album_uri = Spicetify.Player.data.item.metadata.album_uri;
-    let bgImage = Spicetify.Player.data.item.metadata.image_url;
+    if (!Spicetify?.Player?.data?.track && !Spicetify?.Player?.data?.item) return setTimeout(songchange, 300);
+    const data = Spicetify.Player.data;
+    let album_uri = data?.item?.metadata?.album_uri || data?.track?.metadata?.album_uri;
+    let bgImage = data?.item?.metadata?.image_xlarge_url || data?.item?.metadata?.image_large_url || data?.item?.metadata?.image_url || data?.track?.metadata?.image_xlarge_url || data?.track?.metadata?.image_large_url || data?.track?.metadata?.image_url;
     if (!bgImage) {
         bgImage = "https://cdn.jsdelivr.net/gh/JulienMaille/dribbblish-dynamic-theme@main/images/tracklist-row-song-fallback.svg";
         textColor = "#1db954";
@@ -468,36 +470,24 @@ function getVibrant(image) {
 }
 
 function pickCoverColor() {
-    const img = document.querySelector(".main-image-image.cover-art-image");
-    if (!img) return setTimeout(pickCoverColor, 250); // Check if image exists
-
-    // Force src for local files, otherwise we will pick color from previous cover
-    if (Spicetify.Player.data.item.isLocal) img.src = Spicetify.Player.data.item.metadata.image_url;
-
-    if (!img.complete) return setTimeout(pickCoverColor, 250); // Check if image is loaded
+    const data = Spicetify?.Player?.data;
+    let bgImage = data?.item?.metadata?.image_xlarge_url || data?.item?.metadata?.image_large_url || data?.item?.metadata?.image_url || data?.track?.metadata?.image_xlarge_url || data?.track?.metadata?.image_large_url || data?.track?.metadata?.image_url;
+    if (!bgImage) return;
 
     textColor = "#1db954";
-    if (Spicetify.Platform.PlatformData.client_version_triple >= "1.2.48" && img.src.startsWith("https://i.scdn.co/image")) {
-        var imgCORS = new Image();
-        imgCORS.crossOrigin = "anonymous"; // Enable CORS
-        imgCORS.src = Spicetify.Player.data.item.metadata.image_url.replace("spotify:image:", "https://i.scdn.co/image/");
-
-        imgCORS.onload = function () {
-            var canvas = document.createElement("canvas");
-            var ctx = canvas.getContext("2d");
-            ctx.drawImage(imgCORS, 0, 0);
-
-            getVibrant(imgCORS);
-            imgCORS = null;
-            updateColors(textColor);
-        };
-        return;
-    } else {
-        if (!img.src.startsWith("spotify:")) return;
+    let url = bgImage;
+    if (url.startsWith("spotify:image:")) {
+        url = url.replace("spotify:image:", "https://i.scdn.co/image/");
     }
 
-    if (img.complete) getVibrant(img);
-    updateColors(textColor);
+    var imgCORS = new Image();
+    imgCORS.crossOrigin = "anonymous";
+    imgCORS.src = url;
+
+    imgCORS.onload = function () {
+        getVibrant(imgCORS);
+        updateColors(textColor);
+    };
 }
 
 Spicetify.Player.addEventListener("songchange", songchange);
